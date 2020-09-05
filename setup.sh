@@ -4,40 +4,51 @@
 git submodule init
 git submodule update
 
-# what directories should be installable by all users including the root user
-base=(
-    bash
-)
+set -x
 
-# folders that should, or only need to be installed for a local user
-useronly=(
-    git
-)
+sudo apt install build-essential
 
-# run the stow command for the passed in directory ($2) in location $1
-stowit() {
-    usr=$1
-    app=$2
-    # -v verbose
-    # -R recursive
-    # -t target
-    stow -v -R -t ${usr} ${app}
-}
+#######################
+# ZSH
+#######################
+# Fast syntax highlighting
+if [[ ! -d $HOME/.zsh/fast-syntax-highlighting ]]; then
+    git clone https://github.com/zdharma/fast-syntax-highlighting.git $HOME/.zsh/fast-syntax-highlighting
+fi
 
-echo ""
-echo "Stowing apps for user: ${whoami}"
+#######################
+# TMUX
+#######################
 
-# install apps available to local users and root
-for app in ${base[@]}; do
-    stowit "${HOME}" $app
-done
+if [[ ! -d $HOME/.tmux/plugins/tpm ]]; then
+    mkdir -p $HOME/.tmux/plugins
+    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+fi
 
-# install only user space folders
-for app in ${useronly[@]}; do
-    if [[! "$(whoami)" = *"root"*]]; then
-        stowit "${HOME}" $app
-    fi
-done
 
+#######################
+# BIN
+#######################
+
+mkdir -p $HOME/bin
+
+# FASD
+if [[ ! -f $HOME/bin/fasd ]]; then
+    git clone https://github.com/clvv/fasd.git /tmp/fasd
+    cd /tmp/fasd
+    PREFIX=$HOME make install
+    cd -
+fi
+
+# FZF
+if [[ ! -f $HOME/.fzf/bin/fzf ]]; then
+    git clone https://github.com/junegunn/fzf.git $HOME/.fzf
+    yes | $HOME/.fzf/install
+fi
+
+# DIFF-SO-FANCY
+if [[ ! -f $HOME/bin/diff-so-fancy ]]; then
+    curl -o $HOME/bin/diff-so-fancy https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy
+fi
 echo ""
 echo "##### ALL DONE"
