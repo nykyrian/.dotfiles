@@ -2,7 +2,7 @@
 # see /usr/share/doc/zsh/examples/zshrc for examples
 
 GIT_PROMPT_EXECUTABLE="haskell"
-source ~/zsh-git-prompt/zshrc.sh
+#source ~/zsh-git-prompt/zshrc.sh
 # an example prompt
 PROMPT='%B%m%~%b$(git_super_status) %# '
 
